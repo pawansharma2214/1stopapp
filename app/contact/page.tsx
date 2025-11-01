@@ -1,43 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [status, setStatus] = useState("");
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("Sending...");
-
-    try {
-      const res = await fetch("/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        setStatus("Message sent successfully!");
-        setForm({ name: "", email: "", message: "" });
-      } else {
-        setStatus("Failed to send message.");
-      }
-    } catch (err) {
-      console.error(err);
-      setStatus("Error sending message.");
-    }
+    // Redirect to Thank You page on submit
+    router.push("/contact/thank-you");
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: "400px", margin: "2rem auto" }}>
       <h2>Contact Us</h2>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.5rem", maxWidth: "400px" }}>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
         <input
           type="text"
           name="name"
@@ -63,7 +46,6 @@ export default function ContactPage() {
         />
         <button type="submit">Send</button>
       </form>
-      <p>{status}</p>
     </div>
   );
 }
